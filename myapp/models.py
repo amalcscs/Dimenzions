@@ -10,6 +10,7 @@ class Admin_register(models.Model):
     email = models.EmailField(max_length=100)
     password = models.CharField(max_length=50) 
     designation = models.CharField(max_length=100,default="")
+    photo = models.FileField(upload_to='images/', null=True, blank=True)
     
     
 class categories(models.Model):

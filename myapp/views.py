@@ -85,20 +85,49 @@ def admin_login(request):
     else:
         return redirect('admin_log')
 
+def admin_logout(request):
+    if 'admid' in request.session:
+        request.session.flush()
+        return redirect('/')
+    else:
+        return redirect('/')
+
+def admin_settings(request):
+    if 'admid' in request.session:
+        if request.session.has_key('admid'):
+            admid = request.session['admid']
+        else:
+            return redirect('/')
+        adm = Admin_register.objects.filter(reg_id=admid)
+        return render(request, 'admin_settings.html', {'adm': adm})
+    else:
+        return redirect('/')
 
 def admin_dashboard(request):
-
-    admid = request.session['admid']
-    adm = Admin_register.objects.filter(reg_id=admid)
-    users = Admin_register.objects.all().count()
-    models = items.objects.all().count()
-
-    return render(request, 'admin_dashboard.html', {'adm': adm, 'users': users, 'models': models})
+    if 'admid' in request.session:
+        if request.session.has_key('admid'):
+            admid = request.session['admid']
+        else:
+            return redirect('/')
+        adm = Admin_register.objects.filter(reg_id=admid)
+        users = Admin_register.objects.all().count()
+        models = items.objects.all().count()
+        return render(request, 'admin_dashboard.html', {'adm': adm, 'users': users, 'models': models})
+    else:
+        return redirect('/')
 
 
 def show_category(request):
-    caty = categories.objects.all()
-    return render(request, 'categories.html', {'caty': caty})
+    if 'admid' in request.session:
+        if request.session.has_key('admid'):
+            admid = request.session['admid']
+        else:
+            return redirect('/')
+        adm = Admin_register.objects.filter(reg_id=admid)
+        caty = categories.objects.all()
+        return render(request, 'categories.html', {'caty': caty,'adm':adm})
+    else:
+        return redirect('/')
 
 def add_category(request):
     try:
@@ -136,12 +165,28 @@ def cat_delete(request, cat_id):
 
 
 def admin_models(request):
-    return render(request, 'admin_models.html')
+    if 'admid' in request.session:
+        if request.session.has_key('admid'):
+            admid = request.session['admid']
+        else:
+            return redirect('/')
+        adm = Admin_register.objects.filter(reg_id=admid)
+        return render(request, 'admin_models.html',{'adm':adm})
+    else:
+        return redirect('/')
 
 
 def addmodel(request):
-    var = categories.objects.all()
-    return render(request, "addmodel.html", {'var': var})
+    if 'admid' in request.session:
+        if request.session.has_key('admid'):
+            admid = request.session['admid']
+        else:
+            return redirect('/')
+        adm = Admin_register.objects.filter(reg_id=admid)
+        var = categories.objects.all()
+        return render(request, "addmodel.html", {'var': var,'adm':adm})
+    else:
+        return redirect('/')
 
 
 def createmodel(request):
@@ -166,21 +211,45 @@ def createmodel(request):
 
 
 def admin_payment_history(request):
-    return render(request, 'admin_payment_history.html')
+    if 'admid' in request.session:
+        if request.session.has_key('admid'):
+            admid = request.session['admid']
+        else:
+            return redirect('/')
+        adm = Admin_register.objects.filter(reg_id=admid)
+        return render(request, 'admin_payment_history.html',{'adm':adm})
+    else:
+        return redirect('/')
 
 
 def payment_table(request):
-    var = payment.objects.all()
-    if request.method == "POST":
-        fromdate = request.POST.get('fromdate')
-        todate = request.POST.get('todate')
-        var = payment.objects.filter(date__range=[fromdate, todate])
-    return render(request, 'payment_table.html', {'var': var})
+    if 'admid' in request.session:
+        if request.session.has_key('admid'):
+            admid = request.session['admid']
+        else:
+            return redirect('/')
+        adm = Admin_register.objects.filter(reg_id=admid)
+        var = payment.objects.all()
+        if request.method == "POST":
+            fromdate = request.POST.get('fromdate')
+            todate = request.POST.get('todate')
+            var = payment.objects.filter(date__range=[fromdate, todate])
+        return render(request, 'payment_table.html', {'var': var,'adm':adm})
+    else:
+        return redirect('/')
 
 
 def registeredusers(request):
-    use = Admin_register.objects.all()
-    return render(request, 'registeredusers.html', {'use': use})
+    if 'admid' in request.session:
+        if request.session.has_key('admid'):
+            admid = request.session['admid']
+        else:
+            return redirect('/')
+        adm = Admin_register.objects.filter(reg_id=admid)
+        use = Admin_register.objects.all()
+        return render(request, 'registeredusers.html', {'use': use,'adm':adm})
+    else:
+        return redirect('/')
 
 
 def delete(request, reg_id):
@@ -191,15 +260,31 @@ def delete(request, reg_id):
 
 
 def adminedit(request, id):
-    item = items.objects.filter(id=id)
-    viva = categories.objects.all()
-    return render(request, "adminedit.html", {'item': item, 'viva': viva})
+    if 'admid' in request.session:
+        if request.session.has_key('admid'):
+            admid = request.session['admid']
+        else:
+            return redirect('/')
+        adm = Admin_register.objects.filter(reg_id=admid)
+        item = items.objects.filter(id=id)
+        viva = categories.objects.all()
+        return render(request, "adminedit.html", {'item': item, 'viva': viva})
+    else:
+        return redirect('/')
 
 
 def admin_current_models(request):
-    category = categories.objects.all()
-    item = items.objects.all()
-    return render(request, 'admin_current_models.html', {'category': category, 'item': item})
+    if 'admid' in request.session:
+        if request.session.has_key('admid'):
+            admid = request.session['admid']
+        else:
+            return redirect('/')
+        adm = Admin_register.objects.filter(reg_id=admid)
+        category = categories.objects.all()
+        item = items.objects.all()
+        return render(request, 'admin_current_models.html', {'category': category, 'item': item,'adm':adm})
+    else:
+        return redirect('/')
 
 
 def model_delete(request, id):
@@ -212,17 +297,17 @@ def modeledit(request, id):
     if request.session['admid'] == "":
         return redirect('logout')
     else:
+        if request.method == "POST":
+            item = items.objects.get(id=id)
+            item.modelname = request.POST.get('modelname', item.modelname)
+            item.description = request.POST.get('description', item.description)
+            item.gib = request.FILES.get('gib', item.gib)
+            item.price = request.POST.get('price', item.price)
+            item.types = request.POST.get('types', item.types)
+            item.format = request.POST.get('format', item.format)
+            item.modeltype = request.POST.get('modeltype', item.modeltype)
+            item.cat_id_id = request.POST.get('category_name', item.cat_id_id)
+            item.fbx = request.FILES.get('fbx', item.fbx)
 
-        item = items.objects.get(id=id)
-        item.modelname = request.POST.get('modelname', item.modelname)
-        item.description = request.POST.get('description', item.description)
-        item.gib = request.FILES.get('gib', item.gib)
-        item.price = request.POST.get('price', item.price)
-        item.types = request.POST.get('types', item.types)
-        item.format = request.POST.get('format', item.format)
-        item.modeltype = request.POST.get('modeltype', item.modeltype)
-        item.cat_id_id = request.POST.get('category_name', item.cat_id_id)
-        item.fbx = request.FILES.get('fbx', item.fbx)
-
-        item.save()
-        return redirect('admin_current_models')
+            item.save()
+            return redirect('admin_current_models')
