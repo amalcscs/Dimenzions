@@ -3,7 +3,7 @@ from .models import *
 from datetime import date
 import json
 from django.http.response import JsonResponse
-
+from django. contrib import messages
 # Create your views here.
 
 
@@ -59,8 +59,9 @@ def registration(request):
         email = request.POST["email"]
         username = request.POST["username"]
         password = request.POST["password"]
+        img = request.FILES["img"]
         data = Admin_register(fullname=fullname, email=email,
-                              username=username, password=password)
+                              username=username, password=password,photo = img)
         data.save()
         return redirect('admin_log')
     return render(request, 'registration.html')
@@ -100,6 +101,66 @@ def admin_settings(request):
             return redirect('/')
         adm = Admin_register.objects.filter(reg_id=admid)
         return render(request, 'admin_settings.html', {'adm': adm})
+    else:
+        return redirect('/')
+
+def admin_edit_profile(request):
+    if 'admid' in request.session:
+        if request.session.has_key('admid'):
+            admid = request.session['admid']
+        else:
+            return redirect('/')
+        adm = Admin_register.objects.filter(reg_id=admid)
+        if request.method == 'POST':
+            abb = Admin_register.objects.get(reg_id=admid)
+            abb.fullname = request.POST['fullname']
+            abb.email = request.POST['email']
+            abb.username = request.POST['username']
+            abb.save()
+            return redirect("admin_settings")
+        return render(request, 'admin_edit_profile.html', {'adm': adm})
+    else:
+        return redirect('/')
+
+def admin_edit_picture(request):
+    if 'admid' in request.session:
+        if request.session.has_key('admid'):
+            admid = request.session['admid']
+        else:
+            return redirect('/')
+        adm = Admin_register.objects.filter(reg_id=admid)
+        if request.method == 'POST':
+            abb = Admin_register.objects.get(reg_id=admid)
+            abb.photo = request.FILES['img']
+            abb.save()
+            return redirect("admin_settings")
+        return render(request, 'admin_edit_picture.html', {'adm': adm})
+    else:
+        return redirect('/')
+
+def admin_edit_password(request):
+    if 'admid' in request.session:
+        if request.session.has_key('admid'):
+            admid = request.session['admid']
+        else:
+            return redirect('/')
+        adm = Admin_register.objects.filter(reg_id=admid)
+        if request.method == 'POST':
+            ac = Admin_register.objects.get(reg_id=admid)
+            oldps = request.POST['currentPassword']
+            newps = request.POST['newPassword']
+            cmps = request.POST.get('confirmPassword')
+            if oldps != newps:
+                if newps == cmps:
+                    ac.password = request.POST.get('confirmPassword')
+                    ac.save()
+                    msg_success = "Password changed successfully"
+                    return render(request, 'admin_settings.html', {'msg_success': msg_success})
+            elif oldps == newps:
+                messages.add_message(request, messages.INFO, 'Current and New password same')
+            else:
+                messages.info(request, 'Incorrect password same')
+        return render(request, 'admin_edit_password.html', {'adm': adm})
     else:
         return redirect('/')
 
