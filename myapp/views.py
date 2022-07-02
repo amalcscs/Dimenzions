@@ -4,12 +4,21 @@ from datetime import date
 import json
 from django.http.response import JsonResponse
 from django. contrib import messages
+from django.db.models import Q
 # Create your views here.
 
 
 def home(request):
     it = categories.objects.all()
     return render(request, 'home.html',{'it': it})
+
+def search(request):
+    if request.method == 'POST':
+        usr = request.POST['search']
+        pro = Q(category_name__icontains=usr)
+        dsa = categories.objects.filter(pro).distinct()
+        context = {'category': dsa}
+        return render(request, 'search.html', context)
 
 def userhome(request):
     members = request.session['admid']

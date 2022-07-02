@@ -18,6 +18,7 @@ urlpatterns = [
     re_path(r'^Signup_emailval$', views.Signup_emailval, name='Signup_emailval'),
     re_path(r'^$', views.home, name='home'),
     re_path(r'^userhome$', views.userhome, name='userhome'),
+    re_path(r'^search$', views.search, name='search'),
     re_path(r'^new_page/(?P<id>\d+)$', views.new_page, name='new_page'),
     re_path(r'^sub/(?P<id>\d+)/(?P<key>[-:\w]+)$', views.sub, name='sub'),
     
