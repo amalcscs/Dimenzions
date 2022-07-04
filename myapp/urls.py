@@ -49,7 +49,11 @@ urlpatterns = [
     #current models
     re_path(r'^admin_current_models$', views.admin_current_models, name='admin_current_models'),
     re_path(r'^model_delete/(?P<id>\d+)$', views.model_delete,name="model_delete"),
-    re_path(r'^test_page$', views.test_page,name="test_page")
+    re_path(r'^test_page$', views.test_page,name="test_page"),
+    
+    
+    re_path(r'^cart$', views.cart,name="cart"),
+    re_path(r'^checkout$', views.checkout,name="checkout"),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,
