@@ -6,6 +6,7 @@ from django.http.response import JsonResponse
 from django. contrib import messages
 from django.db.models import Q
 from .utils import cookieCart, cartData, guestOrder
+from django.contrib.auth import authenticate, login, logout
 # Create your views here.
 
 
@@ -22,8 +23,8 @@ def search(request):
         return render(request, 'search.html', context)
 
 def userhome(request):
-    members = request.session['admid']
-    member = Admin_register.objects.get(reg_id=members)
+    
+    member = Admin_register.objects.get(fullname="amal")
     it = categories.objects.all()
     return render(request, 'home.html',{'it': it, 'member': member})
 
@@ -39,7 +40,7 @@ def modelshow(request, id):
 
 
 def new_page(request, id):
-    man1 = items.objects.filter(cat_id_id=id)
+    man1 = items.objects.filter(category_id=id)
     man = categories.objects.get(cat_id=id)
     return render(request, 'new_page.html', {'man': man, 'man1': man1})
 
@@ -79,6 +80,12 @@ def registration(request):
 
 def admin_login(request):
     if request.method == 'POST':
+        # username  = request.POST['username']
+        # password = request.POST['password']
+        # user = authenticate(username=username,password=password)
+        # if user is not None:
+        #     request.session['SAdm_id'] = user.id
+        #     return redirect( 'userhome')
         if Admin_register.objects.filter(username=request.POST['username'], password=request.POST['password'], designation="admin").exists():
             member = Admin_register.objects.get(
                 username=request.POST['username'], password=request.POST['password'])
@@ -273,7 +280,7 @@ def createmodel(request):
         category = request.POST['category']
         fbx = request.FILES['fbx']
 
-        item = items(modelname=modelname, description=description, gib=gib, price=price, types=types, format=format, modeltype=modeltype, cat_id_id=category,
+        item = items(modelname=modelname, description=description, gib=gib, price=price, types=types, format=format, modeltype=modeltype, category_id=category,
                      fbx=fbx)
         item.save()
         return redirect('addmodel')
@@ -377,54 +384,73 @@ def modeledit(request, id):
             item.types = request.POST.get('types', item.types)
             item.format = request.POST.get('format', item.format)
             item.modeltype = request.POST.get('modeltype', item.modeltype)
-            item.cat_id_id = request.POST.get('category_name', item.cat_id_id)
+            item.category_id = request.POST.get('category_name', item.category_id)
             item.fbx = request.FILES.get('fbx', item.fbx)
 
             item.save()
             return redirect('admin_current_models')
 
+
+
+#cart
+
+
+def store(request):
+	data = cartData(request)
+
+	cartItems = data['cartItems']
+	order = data['order']
+	items = data['items']
+
+	products = Product.objects.all()
+	context = {'products':products, 'cartItems':cartItems}
+	return render(request, 'store.html', context)
+
+
 def cart(request):
-    data = cartData(request)
+	data = cartData(request)
 
-    cartItems = data['cartItems']
-    order = data['order']
-    items = data['items']
+	cartItems = data['cartItems']
+	order = data['order']
+	items = data['items']
 
-    context = {'items':items, 'order':order, 'cartItems':cartItems}
-    return render(request, 'cart.html', context)
+	context = {'items':items, 'order':order, 'cartItems':cartItems}
+	return render(request, 'cart.html', context)
 
 def checkout(request):
-    data = cartData(request)
-    cartItems = data['cartItems']
-    order = data['order']
-    items = data['items']
+	data = cartData(request)
+	
+	cartItems = data['cartItems']
+	order = data['order']
+	items = data['items']
 
-    context = {'items':items, 'order':order, 'cartItems':cartItems}
-    return render(request, 'checkout.html', context)
+	context = {'items':items, 'order':order, 'cartItems':cartItems}
+	return render(request, 'checkout.html', context)
 
 def updateItem(request):
-    data = json.loads(request.body)
-    productId = data['productId']
-    action = data['action']
-    print('Action:', action)
-    print('Product:', productId)
+	data = json.loads(request.body)
+	productId = data['productId']
+	action = data['action']
+	print('Action:', action)
+	print('Product:', productId)
 
-    customer = request.user.customer
-    product = items.objects.get(id=productId)
-    order, created = Order.objects.get_or_create(customer=customer, complete=False)
+	customer = request.user.customer
+	product = Product.objects.get(id=productId)
+	order, created = Order.objects.get_or_create(customer=customer, complete=False)
 
-    orderItem, created = OrderItem.objects.get_or_create(order=order, product=product)
+	orderItem, created = OrderItem.objects.get_or_create(order=order, product=product)
 
-    if action == 'add':
-        orderItem.quantity = (orderItem.quantity + 1)
-    elif action == 'remove':
-        orderItem.quantity = (orderItem.quantity - 1)
+	if action == 'add':
+		orderItem.quantity = (orderItem.quantity + 1)
+	elif action == 'remove':
+		orderItem.quantity = (orderItem.quantity - 1)
 
-    orderItem.save()
+	orderItem.save()
 
-    if orderItem.quantity <= 0:
-        orderItem.delete()
-    return JsonResponse('Item was added', safe=False)
+	if orderItem.quantity <= 0:
+		orderItem.delete()
+
+	return JsonResponse('Item was added', safe=False)
 
 def processOrder(request):
 	transaction_id = datetime.datetime.now().timestamp()
