@@ -15,12 +15,13 @@ def cookieCart(request):
 	cartItems = order['get_cart_items']
 
 	for i in cart:
+		
 		#We use try block to prevent items in cart that may have been removed from causing error
 		try:	
 			if(cart[i]['quantity']>0): #items with negative quantity = lot of freebies  
 				cartItems += cart[i]['quantity']
 
-				product = Product.objects.get(id=i)
+				product = items.objects.get(id=i)
 				total = (product.price * cart[i]['quantity'])
 
 				order['get_cart_total'] += total
@@ -28,8 +29,8 @@ def cookieCart(request):
 
 				item = {
 				'id':product.id,
-				'product':{'id':product.id,'name':product.product_name, 'price':product.price, 
-				'imageURL':product.product_image.url}, 'quantity':cart[i]['quantity'],
+				'items':{'id':product.id,'name':product.modelname, 'price':product.price, 
+				'imageURL':product.gib.url}, 'quantity':cart[i]['quantity'],
 				'get_total':total,
 				}
 				items.append(item)
@@ -42,9 +43,12 @@ def cookieCart(request):
 	return {'cartItems':cartItems ,'order':order, 'items':items}
 
 def cartData(request):
-	if request.user.is_authenticated:
-		customer = request.user.fullname
-		order, created = Order.objects.get_or_create(customer=customer, complete=False)
+	if 'userid' in request.session:
+		if request.session.has_key('userid'):
+			userid = request.session['userid']
+		
+		member = Admin_register.objects.get(reg_id=userid)
+		order, created = Order.objects.get_or_create(customer=userid, complete=False)
 		items = order.orderitem_set.all()
 		cartItems = order.get_cart_items
 	else:
@@ -63,7 +67,7 @@ def guestOrder(request, data):
 	cookieData = cookieCart(request)
 	items = cookieData['items']
 
-	customer, created = Customer.objects.get_or_create(
+	customer, created = Admin_register.objects.get_or_create(
 			email=email,
 			)
 	customer.name = name
@@ -75,7 +79,7 @@ def guestOrder(request, data):
 		)
 
 	for item in items:
-		product = Product.objects.get(id=item['id'])
+		product = items.objects.get(id=item['id'])
 		orderItem = OrderItem.objects.create(
 			product=product,
 			order=order,
