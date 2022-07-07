@@ -23,16 +23,17 @@ def search(request):
         return render(request, 'search.html', context)
 
 def userhome(request):
-    if 'userid' in request.session:
-        if request.session.has_key('userid'):
-            userid = request.session['userid']
-        else:
-            return redirect('/')
-        member = Admin_register.objects.get(reg_id=userid)
+    # if 'SAdm_id' in request.session:
+    #     if request.session.has_key('SAdm_id'):
+    #         SAdm_id = request.session['SAdm_id']
+    #     else:
+    #         return redirect('/')
+    #     member = User.objects.get(id=SAdm_id)
         it = categories.objects.all()
-        return render(request, 'home.html',{'it': it, 'member': member})
-    else:
-            return redirect('/')
+        return render(request, 'home.html',{'it': it})
+        # return render(request, 'home.html',{'it': it, 'member': member})
+    # else:
+    #         return redirect('/')
 
 def test_page(request):
     it = categories.objects.all()
@@ -46,21 +47,22 @@ def modelshow(request, id):
 
 
 def new_page(request, id):
-    if 'userid' in request.session:
-        if request.session.has_key('userid'):
-            userid = request.session['userid']
-        else:
-            return redirect('/')
-        member = Admin_register.objects.get(reg_id=userid)
+    # if 'SAdm_id' in request.session:
+    #     if request.session.has_key('SAdm_id'):
+    #         SAdm_id = request.session['SAdm_id']
+    #     else:
+    #         return redirect('/')
+    #     member = User.objects.get(id=SAdm_id)
         products = Product.objects.all()
         it = categories.objects.all()
         data = cartData(request)
         cartItems = data['cartItems']
         man1 = items.objects.filter(category_id=id)
         man = categories.objects.get(cat_id=id)
-        return render(request, 'new_page.html', {'it':it,'products':products,'cartItems':cartItems,'man': man, 'man1': man1,'member':member})
-    else:
-            return redirect('/')
+        return render(request, 'new_page.html', {'it':it,'products':products,'cartItems':cartItems,'man': man, 'man1': man1})
+        # return render(request, 'new_page.html', {'it':it,'products':products,'cartItems':cartItems,'man': man, 'man1': man1,'member':member})
+    # else:
+    #         return redirect('/')
 
 
 def sub(request, id, key):
@@ -98,28 +100,35 @@ def registration(request):
 
 def admin_login(request):
     if request.method == 'POST':
-        # username  = request.POST['username']
-        # password = request.POST['password']
-        # user = authenticate(username=username,password=password)
-        # if user is not None:
-        #     request.session['SAdm_id'] = user.id
-        #     return redirect( 'userhome')
-        if Admin_register.objects.filter(username=request.POST['username'], password=request.POST['password'], designation="admin").exists():
+        username  = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(username=username,password=password)
+        if user is not None:
+            request.session['SAdm_id'] = user.id
+            return redirect('userhome')
+        elif Admin_register.objects.filter(username=request.POST['username'], password=request.POST['password'], designation="admin").exists():
             member = Admin_register.objects.get(
                 username=request.POST['username'], password=request.POST['password'])
             request.session['admid'] = member.reg_id
             return redirect('admin_dashboard')
 
-        elif Admin_register.objects.filter(username=request.POST['username'], password=request.POST['password'], designation="user").exists():
-            member = Admin_register.objects.get(
-                username=request.POST['username'], password=request.POST['password'])
-            request.session['userid'] = member.reg_id
-            return redirect('userhome')
+        # elif Admin_register.objects.filter(username=request.POST['username'], password=request.POST['password'], designation="user").exists():
+        #     member = Admin_register.objects.get(
+        #         username=request.POST['username'], password=request.POST['password'])
+        #     request.session['userid'] = member.reg_id
+        #     return redirect('userhome')
 
         else:
             return redirect('admin_log')
     else:
         return redirect('admin_log')
+
+def user_logout(request):
+    if 'SAdm_id' in request.session:
+        request.session.flush()
+        return redirect('/')
+    else:
+        return redirect('/')
 
 def admin_logout(request):
     if 'admid' in request.session:
@@ -414,34 +423,26 @@ def modeledit(request, id):
 
 
 def store(request):
+    data = cartData(request)
+
+    cartItems = data['cartItems']
+    order = data['order']
+    items = data['items']
+
+    products = items.objects.all()
+    context = {'products':products, 'cartItems':cartItems}
+    return render(request, 'store.html', context)
+
+
+def cart(request):
 	data = cartData(request)
 
 	cartItems = data['cartItems']
 	order = data['order']
 	items = data['items']
 
-	products = Product.objects.all()
-	context = {'products':products, 'cartItems':cartItems}
-	return render(request, 'store.html', context)
-
-
-def cart(request):
-    if 'userid' in request.session:
-        if request.session.has_key('userid'):
-            userid = request.session['userid']
-        else:
-            return redirect('/')
-        member = Admin_register.objects.get(reg_id=userid)
-        data = cartData(request)
-
-        cartItems = data['cartItems']
-        order = data['order']
-        items = data['items']
-
-        context = {'items':items, 'order':order, 'cartItems':cartItems,'member':member}
-        return render(request, 'cart.html', context)
-    else:
-        return redirect('/')
+	context = {'items':items, 'order':order, 'cartItems':cartItems}
+	return render(request, 'cart.html', context)
 
 def checkout(request):
 	data = cartData(request)
@@ -461,7 +462,7 @@ def updateItem(request):
 	print('Product:', productId)
 
 	customer = request.user.customer
-	product = Product.objects.get(id=productId)
+	product = items.objects.get(id=productId)
 	order, created = Order.objects.get_or_create(customer=customer, complete=False)
 
 	orderItem, created = OrderItem.objects.get_or_create(order=order, product=product)
@@ -479,27 +480,24 @@ def updateItem(request):
 	return JsonResponse('Item was added', safe=False)
 
 def processOrder(request):
-    transaction_id = datetime.datetime.now().timestamp()
-    data = json.loads(request.body)
+	transaction_id = datetime.datetime.now().timestamp()
+	data = json.loads(request.body)
 
-    if 'userid' in request.session:
-        if request.session.has_key('userid'):
-            userid = request.session['userid']
-        else:
-            return redirect('/')
-        member = Admin_register.objects.get(reg_id=userid)
-        order, created = Order.objects.get_or_create(customer=userid, complete=False)
-    else:
-        customer, order = guestOrder(request, data)
-        total = float(data['form']['total'])
-        order.transaction_id = transaction_id
+	if request.user.is_authenticated:
+		customer = request.user.customer
+		order, created = Order.objects.get_or_create(customer=customer, complete=False)
+	else:
+		customer, order = guestOrder(request, data)
 
-    if total == order.get_cart_total:
-        order.complete = True
-    order.save()
+	total = float(data['form']['total'])
+	order.transaction_id = transaction_id
 
-    if order.shipping == True:
-        ShippingAddress.objects.create(
+	if total == order.get_cart_total:
+		order.complete = True
+	order.save()
+
+	if order.shipping == True:
+		ShippingAddress.objects.create(
 		customer=customer,
 		order=order,
 		address=data['shipping']['address'],
@@ -508,4 +506,4 @@ def processOrder(request):
 		zipcode=data['shipping']['zipcode'],
 		)
 
-    return JsonResponse('Payment submitted..', safe=False)
+	return JsonResponse('Payment submitted..', safe=False)

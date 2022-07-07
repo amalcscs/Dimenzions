@@ -15,7 +15,6 @@ def cookieCart(request):
 	cartItems = order['get_cart_items']
 
 	for i in cart:
-		
 		#We use try block to prevent items in cart that may have been removed from causing error
 		try:	
 			if(cart[i]['quantity']>0): #items with negative quantity = lot of freebies  
@@ -30,8 +29,8 @@ def cookieCart(request):
 				item = {
 				'id':product.id,
 				'items':{'id':product.id,'name':product.modelname, 'price':product.price, 
-				'imageURL':product.gib.url}, 'quantity':cart[i]['quantity'],
-				'get_total':total,
+				'imageURL':product.imageURL}, 'quantity':cart[i]['quantity'],
+				'digital':product.digital,'get_total':total,
 				}
 				items.append(item)
 
@@ -43,12 +42,12 @@ def cookieCart(request):
 	return {'cartItems':cartItems ,'order':order, 'items':items}
 
 def cartData(request):
-	if 'userid' in request.session:
-		if request.session.has_key('userid'):
-			userid = request.session['userid']
+	if 'SAdm_id' in request.session:
+		if request.session.has_key('SAdm_id'):
+			SAdm_id = request.session['SAdm_id']
 		
-		member = Admin_register.objects.get(reg_id=userid)
-		order, created = Order.objects.get_or_create(customer=userid, complete=False)
+		member = User.objects.get(id=SAdm_id)
+		order, created = Order.objects.get_or_create(customer=member, complete=False)
 		items = order.orderitem_set.all()
 		cartItems = order.get_cart_items
 	else:
@@ -67,8 +66,8 @@ def guestOrder(request, data):
 	cookieData = cookieCart(request)
 	items = cookieData['items']
 
-	customer, created = Admin_register.objects.get_or_create(
-			email=email,
+	customer, created = Customer.objects.get_or_create(
+			email="email",
 			)
 	customer.name = name
 	customer.save()

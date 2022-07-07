@@ -8,6 +8,7 @@ urlpatterns = [
     re_path(r'^admin_log$', views.admin_log, name='admin_log'),
     re_path(r'^admin_login$', views.admin_login, name='admin_login'),
     re_path(r'^admin_logout$', views.admin_logout, name='admin_logout'),
+    re_path(r'^user_logout$', views.user_logout, name='user_logout'),
     re_path(r'^admin_settings$', views.admin_settings, name='admin_settings'),
     re_path(r'^admin_edit_picture$', views.admin_edit_picture, name='admin_edit_picture'),
     re_path(r'^admin_edit_profile$', views.admin_edit_profile, name='admin_edit_profile'),
@@ -54,6 +55,8 @@ urlpatterns = [
     
     re_path(r'^cart$', views.cart,name="cart"),
     re_path(r'^checkout$', views.checkout,name="checkout"),
+    re_path(r'^updateItem$', views.updateItem,name="updateItem"),
+    re_path(r'^processOrder$', views.processOrder,name="processOrder"),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,

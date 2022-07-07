@@ -3,6 +3,10 @@
 
 <head>
 {% load static %}
+<!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> -->
   <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -127,13 +131,16 @@
             <a class="nav-link active text-light" aria-current="page" href="{% url 'home' %}">Home</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link text-light" href=""><b>{{member.fullname}}</b></a>
+            <a class="nav-link text-light" href=""><b>{{member.fullname}} {{member.username}}</b></a>
           </li>
           <li class="nav-item">
             <a class="nav-link text-light" href="#">Pricing</a>
           </li>
           <li class="nav-item">
             <a class="nav-link text-light" href="{% url 'admin_login' %}">Login/Signin</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-light" href="{% url 'user_logout' %}">Logout</a>
           </li>
           <li class="nav-item">
           <a href="{% url 'cart' %}">
