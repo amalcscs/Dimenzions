@@ -1,62 +1,72 @@
-from django.urls import re_path
-from .import views
+from django.urls import path
+from . import views
 from django.views.static import serve
 from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    re_path(r'^admin_log$', views.admin_log, name='admin_log'),
-    re_path(r'^admin_login$', views.admin_login, name='admin_login'),
-    re_path(r'^admin_logout$', views.admin_logout, name='admin_logout'),
-    re_path(r'^user_logout$', views.user_logout, name='user_logout'),
-    re_path(r'^admin_settings$', views.admin_settings, name='admin_settings'),
-    re_path(r'^admin_edit_picture$', views.admin_edit_picture, name='admin_edit_picture'),
-    re_path(r'^admin_edit_profile$', views.admin_edit_profile, name='admin_edit_profile'),
-    re_path(r'^admin_edit_password$', views.admin_edit_password, name='admin_edit_password'),
-    re_path(r'^modelshow/(?P<id>\d+)$', views.modelshow, name='modelshow'),
-    re_path(r'^admin_dashboard$', views.admin_dashboard, name='admin_dashboard'),
-    re_path(r'^registration$', views.registration, name='registration'),
-    re_path(r'^Signup_emailval$', views.Signup_emailval, name='Signup_emailval'),
-    re_path(r'^$', views.home, name='home'),
-    re_path(r'^userhome$', views.userhome, name='userhome'),
-    re_path(r'^search$', views.search, name='search'),
-    re_path(r'^new_page/(?P<id>\d+)$', views.new_page, name='new_page'),
-    re_path(r'^sub/(?P<id>\d+)/(?P<key>[-:\w]+)$', views.sub, name='sub'),
+	path('admin_log', views.admin_log, name='admin_log'),
+    path('admin_login', views.admin_login, name='admin_login'),
+    path('admin_logout', views.admin_logout, name='admin_logout'),
+    path('user_logout', views.user_logout, name='user_logout'),
+    path('admin_settings', views.admin_settings, name='admin_settings'),
+    path('admin_edit_picture', views.admin_edit_picture, name='admin_edit_picture'),
+    path('admin_edit_profile', views.admin_edit_profile, name='admin_edit_profile'),
+    path('admin_edit_password', views.admin_edit_password, name='admin_edit_password'),
+    path('modelshow/(?P<id>\d+)', views.modelshow, name='modelshow'),
+    path('admin_dashboard', views.admin_dashboard, name='admin_dashboard'),
+    path('registration', views.registration, name='registration'),
+    path('Signup_emailval', views.Signup_emailval, name='Signup_emailval'),
+    path('', views.home, name='home'),
+    path('userhome', views.userhome, name='userhome'),
+    path('search', views.search, name='search'),
+    path('new_page/(?P<id>\d+)', views.new_page, name='new_page'),
+    path('sub/(?P<id>\d+)/(?P<key>[-:\w]+)', views.sub, name='sub'),
     
     #category
-    re_path(r'^category$', views.show_category, name="category"),
-    re_path(r'^add_category$', views.add_category, name="add_category"),
-    re_path(r'^cat_delete/(?P<cat_id>\d+)$', views.cat_delete, name="cat_delete"),
+    path('category', views.show_category, name="category"),
+    path('add_category', views.add_category, name="add_category"),
+    path('cat_delete/(?P<cat_id>\d+)', views.cat_delete, name="cat_delete"),
     
     #models
-    re_path(r'^admin_models$', views.admin_models, name='admin_models'),
+    path('admin_models', views.admin_models, name='admin_models'),
     
     #add model
-    re_path(r'^addmodel$', views.addmodel, name="addmodel"),
-    re_path(r'^createmodel$', views.createmodel, name="createmodel"),
+    path('addmodel', views.addmodel, name="addmodel"),
+    path('createmodel', views.createmodel, name="createmodel"),
     
     #payment history
-    re_path(r'^admin_payment_history$', views.admin_payment_history, name='admin_payment_history'),
-    re_path(r'^payment_table$', views.payment_table, name='payment_table'),
+    path('admin_payment_history', views.admin_payment_history, name='admin_payment_history'),
+    path('payment_table', views.payment_table, name='payment_table'),
     
     #registered users
-    re_path(r'^registeredusers$', views.registeredusers, name='registeredusers'),
-    re_path(r'^delete/(?P<reg_id>\d+)$', views.delete, name='delete'),
+    path('registeredusers', views.registeredusers, name='registeredusers'),
+    path('delete/(?P<reg_id>\d+)', views.delete, name='delete'),
     
     #model edit
-    re_path(r'^adminedit/(?P<id>\d+)$', views.adminedit,name="adminedit"),
-    re_path(r'^modeledit/(?P<id>\d+)$', views.modeledit,name="modeledit"),
+    path('adminedit/(?P<id>\d+)', views.adminedit,name="adminedit"),
+    path('modeledit/(?P<id>\d+)', views.modeledit,name="modeledit"),
 
     #current models
-    re_path(r'^admin_current_models$', views.admin_current_models, name='admin_current_models'),
-    re_path(r'^model_delete/(?P<id>\d+)$', views.model_delete,name="model_delete"),
-    re_path(r'^test_page$', views.test_page,name="test_page"),
+    path('admin_current_models', views.admin_current_models, name='admin_current_models'),
+    path('model_delete/(?P<id>\d+)', views.model_delete,name="model_delete"),
+    path('test_page', views.test_page,name="test_page"),
     
     
-    re_path(r'^cart$', views.cart,name="cart"),
-    re_path(r'^checkout$', views.checkout,name="checkout"),
-    re_path(r'^updateItem$', views.updateItem,name="updateItem"),
-    re_path(r'^processOrder$', views.processOrder,name="processOrder"),
+   
+	#Leave as empty string for base url
+	# path('store', views.store, name="store"),
+	path('cart/', views.cart, name="cart"),
+	path('checkout/', views.checkout, name="checkout"),
+
+	path('update_item/', views.updateItem, name="update_item"),
+	path('process_order/', views.processOrder, name="process_order"),
+	
+	path('login/', views.login, name="login"),
+	path('logout/', views.logout, name="logout"),
+
+
+
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,

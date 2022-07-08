@@ -2,8 +2,7 @@
 {% load static %}
 {% block content %}
 
-
-<div class="container mt-3">
+<div class="container mt-5">
 	<div class="row">
 		<div class="col-lg-12">
 			<div class="box-element">
@@ -15,7 +14,7 @@
 				<table class="table">
 					<tr>
 						<th><h5>Items: <strong>{{order.get_cart_items}}</strong></h5></th>
-						<th><h5>Total:<strong> $</strong></h5></th>
+						<th><h5>Total:<strong> ${{order.get_cart_total|floatformat:2}}</strong></h5></th>
 						<th>
 							<a  style="float:right; margin:5px;" class="btn btn-success" href="{% url 'checkout' %}">Checkout</a>
 						</th>
@@ -27,7 +26,9 @@
 			<br>
 			<div class="box-element">
 				<div class="cart-row">
-					<div style="flex:2"></div>
+					<!-- <div style="flex:2"></div> -->
+					<div class="" style="padding-left:50px;"></div>
+
 					<div style="flex:2"><strong>Item</strong></div>
 					<div style="flex:1"><strong>Price</strong></div>
 					<div style="flex:1"><strong>Quantity</strong></div>
@@ -35,9 +36,16 @@
 				</div>
 				{% for item in items %}
 				<div class="cart-row">
-					<div style="flex:2"><img class="row-image" src="{{item.product.imageURL}}"></div>
-					<div style="flex:2"><p>{{item.product.modelname}}</p></div>
-					<div style="flex:1"><p></p></div>
+					<!-- <div style="flex:2">
+						
+						<model-viewer class="home-img3" src="{{item.product.imageURL}}" alt="New York" ar
+                        ar-modes="webxr scene-viewer quick-look" environment-image="neutral" auto-rotate
+                        camera-controls></model-viewer>
+					</div> -->
+					<div class="" style="padding-left:50px;"></div>
+
+					<div style="flex:2"><p>{{item.product.name}}</p></div>
+					<div style="flex:1"><p>${{item.product.price|floatformat:2}}</p></div>
 					<div style="flex:1">
 						<p class="quantity">{{item.quantity}}</p>
 						<div class="quantity">
