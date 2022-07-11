@@ -192,6 +192,13 @@
         <script src="{% static 'styles/js/settings.js' %} "></script>
         <script src="{% static 'styles/js/todolist.js' %} "></script>
         <!-- endinject -->
+        {% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
     </body>
 
     </html>

@@ -7,6 +7,7 @@ from django. contrib import messages
 from django.db.models import Q
 from .utils import cookieCart, cartData, guestOrder
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 
 
@@ -85,16 +86,27 @@ def Signup_emailval(request):
     return JsonResponse(data)
 
 def registration(request):
-    if request.method == "POST":
-        fullname = request.POST["firstname"]
-        lastname = request.POST["lastname"]
-        email = request.POST["email"]
-        username = request.POST["username"]
-        password = request.POST["password"]
-        data = User(first_name=fullname,last_name=lastname, email=email,
-                              username=username, password=password)
-        data.save()
-        return redirect('admin_log')
+    if request.method == 'POST':
+        firstname = request.POST['first_name']
+        lastname = request.POST['last_name']
+        email = request.POST['email']
+        username = request.POST['username']
+        password = request.POST['password']
+        confirmpassword = request.POST['cpassword']
+        
+        if password == confirmpassword:
+            if User.objects.filter(username=username).exists():
+                return redirect('admin_log')
+            else:
+                user = User.objects.create_user(first_name=firstname,last_name=lastname,email=email,username=username,password=password)
+                user.save()
+                msg_success = "Registration Successfull"
+                messages.info(request, 'Registration successfully completed')
+                return render(request,'registration.html',{'msg_success':msg_success})
+        else:
+            messages.info(request, 'password not matching')
+            return redirect('registration')
+   
     return render(request, 'registration.html')
 
 
@@ -450,16 +462,16 @@ def modeledit(request, id):
 #     else:
 #         return redirect('/')
 
-# def store(request):
-# 	data = cartData(request)
+def store(request):
+	data = cartData(request)
 
-# 	cartItems = data['cartItems']
-# 	order = data['order']
-# 	items = data['items']
+	cartItems = data['cartItems']
+	order = data['order']
+	items = data['items']
 
-# 	products = Product.objects.all()
-# 	context = {'products':products, 'cartItems':cartItems}
-# 	return render(request, 'store/store.html', context)
+	products = Product.objects.all()
+	context = {'products':products, 'cartItems':cartItems}
+	return render(request, 'store/store.html', context)
 
 
 def cart(request):

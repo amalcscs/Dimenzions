@@ -4,6 +4,7 @@ from django.views.static import serve
 from django.conf import settings
 from django.conf.urls.static import static
 
+
 urlpatterns = [
 	path('admin_log', views.admin_log, name='admin_log'),
     path('admin_login', views.admin_login, name='admin_login'),

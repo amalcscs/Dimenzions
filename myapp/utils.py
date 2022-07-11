@@ -1,5 +1,6 @@
 import json
 from .models import *
+from django.contrib.auth import authenticate, login, logout
 
 def cookieCart(request):
 
@@ -29,7 +30,7 @@ def cookieCart(request):
 				item = {
 				'id':product.id,
 				'product':{'id':product.id,'name':product.modelname, 'price':product.price, 
-				'imageURL':product.gib}, 'quantity':cart[i]['quantity'],
+				'imageURL':product.imageURL}, 'quantity':cart[i]['quantity'],
 				'digital':product.digital,'get_total':total,
 				}
 				items.append(item)
@@ -42,24 +43,26 @@ def cookieCart(request):
 	return {'cartItems':cartItems ,'order':order, 'items':items}
 
 def cartData(request):
-	if request.user.is_authenticated:
-		customer = request.user.customer
-		order, created = Order.objects.get_or_create(customer=customer, complete=False)
-		items = order.orderitem_set.all()
-		cartItems = order.get_cart_items
-	else:
-		cookieData = cookieCart(request)
-		cartItems = cookieData['cartItems']
-		order = cookieData['order']
-		items = cookieData['items']
+    if 'SAdm_id' in request.session:
+        if request.session.has_key('SAdm_id'):
+            SAdm_id = request.session['SAdm_id']
+        member = User.objects.get(id=SAdm_id)
+        order, created = Order.objects.get_or_create(customer=SAdm_id, complete=False)
+        items = order.orderitem_set.all()
+        cartItems = order.get_cart_items
+    else:
+        cookieData = cookieCart(request)
+        cartItems = cookieData['cartItems']
+        order = cookieData['order']
+        items = cookieData['items']
 
-	return {'cartItems':cartItems ,'order':order, 'items':items}
+    return {'cartItems':cartItems ,'order':order, 'items':items}
 
 	
 def guestOrder(request, data):
 	name = data['form']['name']
 	email = data['form']['email']
-
+    
 	cookieData = cookieCart(request)
 	items = cookieData['items']
 
