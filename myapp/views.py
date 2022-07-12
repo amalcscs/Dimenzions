@@ -48,7 +48,7 @@ def modelshow(request, id):
 
 
 def new_page(request, id):
-    if 'SAdm_id' in request.session:
+    
         if request.session.has_key('SAdm_id'):
             SAdm_id = request.session['SAdm_id']
         else:
@@ -246,6 +246,19 @@ def show_category(request):
     else:
         return redirect('/')
 
+def Sub_categories(request):
+    if 'admid' in request.session:
+        if request.session.has_key('admid'):
+            admid = request.session['admid']
+        else:
+            return redirect('/')
+        adm = Admin_register.objects.filter(reg_id=admid)
+        cate = categories.objects.all()
+        subcate = SubCategory.objects.all()
+        return render(request, 'Sub_categories.html', {'subcate':subcate,'caty': cate,'adm':adm})
+    else:
+        return redirect('/')
+
 def add_category(request):
     try:
 
@@ -273,12 +286,28 @@ def add_category(request):
     except:
         return redirect('categories')
 
+def add_subcategory(request):
+        if request.method == 'POST':
+            abc = SubCategory()
+            abc.category_id  = request.POST['category']
+            abc.subcategory = request.POST['subcategory']
+            abc.save()
+            msg_success = "Added successfull"
+            return render(request, 'Sub_categories.html', {'msg_success': msg_success})
+        return render(request, 'Sub_categories.html',) 
+            
 
 def cat_delete(request, cat_id):
 
     emp = categories.objects.get(cat_id=cat_id)
     emp.delete()
     return redirect('category')
+
+def subcat_delete(request, id):
+    
+    emp = SubCategory.objects.get(id=id)
+    emp.delete()
+    return redirect('Sub_categories')
 
 
 def admin_models(request):
@@ -389,6 +418,19 @@ def adminedit(request, id):
     else:
         return redirect('/')
 
+def admin_editmodel(request, id):
+    if 'admid' in request.session:
+        if request.session.has_key('admid'):
+            admid = request.session['admid']
+        else:
+            return redirect('/')
+        adm = Admin_register.objects.filter(reg_id=admid)
+        item = Product.objects.filter(id=id)
+        viva = categories.objects.all()
+        return render(request, "admin_editmodel.html", {'item': item, 'viva': viva})
+    else:
+        return redirect('/')
+
 
 def admin_current_models(request):
     if 'admid' in request.session:
@@ -475,20 +517,21 @@ def store(request):
 
 
 def cart(request):
-	if 'SAdm_id' in request.session:
-		if request.session.has_key('SAdm_id'):
-			SAdm_id = request.session['SAdm_id']
-		else:
-			return redirect('/')
-		member = User.objects.get(id=SAdm_id)
-		data = cartData(request)
+    if 'SAdm_id' in request.session:
+        if request.session.has_key('SAdm_id'):
+            SAdm_id = request.session['SAdm_id']
+        else:
+            return redirect('/')
+        
+        member = User.objects.get(id=SAdm_id)
+        data = cartData(request)
+        print(data['cartItems'])
+        cartItems = data['cartItems']
+        order = data['order']
+        items = data['items']
 
-		cartItems = data['cartItems']
-		order = data['order']
-		items = data['items']
-
-		context = {'items':items, 'order':order, 'cartItems':cartItems,'member':member}
-		return render(request, 'cart.html', context)
+        context = {'items':items, 'order':order, 'cartItems':cartItems,'member':member}
+        return render(request, 'cart.html', context)
 
 def checkout(request):
 	if 'SAdm_id' in request.session:
@@ -532,30 +575,31 @@ def updateItem(request):
 	return JsonResponse('Item was added', safe=False)
 
 def processOrder(request):
-	transaction_id = datetime.datetime.now().timestamp()
-	data = json.loads(request.body)
+    print("name")
+    transaction_id = datetime.datetime.now().timestamp()
+    data = json.loads(request.body)
 
-	if request.user.is_authenticated:
-		customer = request.user.customer
-		order, created = Order.objects.get_or_create(customer=customer, complete=False)
-	else:
-		customer, order = guestOrder(request, data)
+    if request.user.is_authenticated:
+        customer = request.user.customer
+        order, created = Order.objects.get_or_create(customer=customer, complete=False)
+    else:
+        customer, order = guestOrder(request, data)
 
-	total = float(data['form']['total'])
-	order.transaction_id = transaction_id
+    total = float(data['form']['total'])
+    order.transaction_id = transaction_id
 
-	if total == order.get_cart_total:
-		order.complete = True
-	order.save()
+    if total == order.get_cart_total:
+        order.complete = True
+    order.save()
 
-	if order.shipping == True:
-		ShippingAddress.objects.create(
-		customer=customer,
-		order=order,
-		address=data['shipping']['address'],
-		city=data['shipping']['city'],
-		state=data['shipping']['state'],
-		zipcode=data['shipping']['zipcode'],
-		)
+    if order.shipping == True:
+        ShippingAddress.objects.create(
+        customer=customer,
+        order=order,
+        address=data['shipping']['address'],
+        city=data['shipping']['city'],
+        state=data['shipping']['state'],
+        zipcode=data['shipping']['zipcode'],
+        )
 
-	return JsonResponse('Payment submitted..', safe=False)
+    return JsonResponse('Payment submitted..', safe=False)

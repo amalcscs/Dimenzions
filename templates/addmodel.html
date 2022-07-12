@@ -125,6 +125,24 @@
                         </div>
 
                         <div class="form-group row">
+                            <div class="col-sm-3">
+                                <label class="form-check-label" for="inlineRadio2">Sub Category</label>
+                            </div>
+                            <div class="col-sm-6">
+                                <select class="form-select w-100" id="inlineRadio2" aria-label="Default select example"
+                                    name="category" required>
+                                    <option value="">
+                                        --select--
+                                    </option>
+                                    {% for i in var %}
+                                    <option value="{{i.cat_id}}">{{i.sub_category1}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group row">
                             <label class="col-sm-3 col-form-label">Upload .fbx
                                 model</label>
                             <div class="col-sm-6">

@@ -24,6 +24,16 @@ class categories(models.Model):
     sub_category4 = models.CharField(max_length=255)
     sub_category5 = models.CharField(max_length=255)
 
+
+class SubCategory(models.Model):
+    category = models.ForeignKey(categories, on_delete=models.CASCADE,
+                                    related_name='SubCategorycategories', null=True, blank=True)
+    subcategory = models.CharField(max_length=240, null=True)
+
+    def __str__(self):
+        return self.subcategory
+
+
 class Customer(models.Model):
 	user = models.OneToOneField(User, null=True, blank=True, on_delete=models.CASCADE)
 	name = models.CharField(max_length=200, null=True)
@@ -56,6 +66,15 @@ class Product(models.Model):
 		except:
 			url = ''
 		return url
+
+
+
+class payment(models.Model):
+    modelname = models.ForeignKey(Product,on_delete=models.DO_NOTHING , related_name='pay_model',null=True,blank=True)
+    price = models.ForeignKey(Product , on_delete=models.DO_NOTHING , related_name='pay_price',null=True,blank=True)
+    clientname = models.CharField(max_length=225 ,null=True)
+    date=models.DateField(auto_now_add=False, auto_now=False,  null=True, blank=True) 
+
 
 class Order(models.Model):
 	customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True, blank=True)

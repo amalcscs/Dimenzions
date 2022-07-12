@@ -105,9 +105,9 @@
                     </li> -->
                     <li class="nav-item nav-profile dropdown">
                         <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
-                            {% for i in adm %}
-                            <img src="{{ i.photo.url }}" alt="profile" />
-                            {% endfor %}
+                            <!-- {% for i in adm %} -->
+                            <img src="{% static 'images/faces/face1.jpg' %}" alt="profile" />
+                            <!-- {% endfor %} -->
                         </a>
                         <div class="dropdown-menu dropdown-menu-right navbar-dropdown"
                             aria-labelledby="profileDropdown">
@@ -334,6 +334,12 @@
                         <a class="nav-link" href="{% url 'category' %}">
                             <i class="icon-layout menu-icon"></i>
                             <span class="menu-title">Categories</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'Sub_categories' %}">
+                            <i class="icon-layout menu-icon"></i>
+                            <span class="menu-title">Sub Categories</span>
                         </a>
                     </li>
                     <li class="nav-item">

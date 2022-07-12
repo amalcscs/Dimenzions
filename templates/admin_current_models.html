@@ -39,7 +39,7 @@
 <div class="row ">
 
 
-    {% for j in item %} {% if i.cat_id == j.cat_id_id %}
+    {% for j in item %} {% if i.cat_id == j.category_id %}
 
 
 
@@ -91,7 +91,7 @@
 
 
                     <center>
-                        <a style="text-decoration:none ; color:white" href="model_delete/{{j.id}}">
+                        <a style="text-decoration:none ; color:white" href="{% url 'model_delete' j.id %}">
                             <button type="button" class="btn btn-outline-danger ">
                                 <i class=aria-hidden="true">delete</i>
 
@@ -101,7 +101,7 @@
 
                 </div>
                 <div class="col-lg-6 col-md-6 col-sm-12  col-12 mt-2">
-                    <a href="adminedit/{{j.id}}">
+                    <a href="{% url 'admin_editmodel' j.id %}">
                         <center> <button type="button" class="btn btn-outline-warning ">
                                 <i class="fa fa-pencil icon-md" aria-hidden="true"> edit </i>
 
