@@ -22,7 +22,7 @@ urlpatterns = [
     re_path(r'^userhome$', views.userhome, name='userhome'),
     re_path(r'^search$', views.search, name='search'),
     re_path(r'^new_page/(?P<id>\d+)$', views.new_page, name='new_page'),
-    re_path(r'^sub/(?P<id>\d+)/(?P<key>[-:\w]+)$', views.sub, name='sub'),
+    re_path(r'^sub/(?P<id>\d+)$', views.sub, name='sub'),
     
     #category
     re_path(r'^category$', views.show_category, name="category"),

@@ -36,7 +36,7 @@
                             <div class="form-group row">
                                 <label for="exampleInputEmail2" class="col-md-4  col-form-label">Sub Category Name</label>
                                 <div class="col-md-8">
-                                    <input type="test" class="form-control" name="sucategory" placeholder="Sub Category" id="exampleInputEmail2" required>
+                                    <input type="test" class="form-control" name="subcategory" placeholder="Sub Category" id="exampleInputEmail2" required>
                                 </div>
                             </div>
                           
@@ -66,16 +66,16 @@
                                 <div class="table-responsive">
                                     <table class="table" id="myTable">
                                         <tbody>
-                                            {% for i in subcate %}
+                                            {% for j in subcate %}
                                             <tr>
                                                
                                                 <td>
-                                                    {{i.subcategory}}
+                                                    {{j.subcategory}}
                                                 </td>
 
 
                                                 <td>
-                                                    <a href="subcat_delete/{{i.id}}"> <i class="icon-trash icon-danger icon-md menu-icon"></i></a>
+                                                    <a href="subcat_delete/{{j.id}}"> <i class="icon-trash icon-danger icon-md menu-icon"></i></a>
                                                 </td>
 
 

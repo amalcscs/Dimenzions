@@ -187,34 +187,25 @@
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown1"
             aria-controls="navbarNavDropdown1" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
-        </button>
+        </button>{% for j in man %}
         <div class="collapse navbar-collapse justify-content-start" id="navbarNavDropdown1">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link active text-light" aria-current="page" href="#">{{man.category_name}}</a>
+                    <a class="nav-link active text-light" aria-current="page" href="{% url 'home' %}">{{j.category_name}}</a>
                 </li>&nbsp;
+                {% for i in sub %}
+                
+                {% if i.category_id == j.cat_id %}
                 <li class="nav-item">
                     <a class="nav-link active text-light" aria-current="page"
-                        href="{% url 'sub' man.cat_id man.sub_category1 %}">{{man.sub_category1}}</a>
+                        href="{% url 'sub' i.id %}">{{i.subcategory}}</a>
                 </li>&nbsp;
-                <li class="nav-item">
-                    <a class="nav-link active text-light" aria-current="page"
-                        href="{% url 'sub' man.cat_id man.sub_category2 %}">{{man.sub_category2}}</a>
-                </li>&nbsp;
-                <li class="nav-item">
-                    <a class="nav-link active text-light" aria-current="page"
-                        href="{% url 'sub' man.cat_id man.sub_category3 %}">{{man.sub_category3}}</a>
-                </li>&nbsp;
-                <li class="nav-item">
-                    <a class="nav-link active text-light" aria-current="page"
-                        href="{% url 'sub' man.cat_id man.sub_category4 %}">{{man.sub_category4}}</a>
-                </li>&nbsp;
-                <li class="nav-item">
-                    <a class="nav-link active text-light" aria-current="page"
-                        href="{% url 'sub' man.cat_id man.sub_category5 %}">{{man.sub_category5}}</a>
-                </li>&nbsp;
+                {% endif %}
+                {% endfor %}
+                
             </ul>
         </div>
+        {% endfor %}
     </nav>
 
     <div class="container mt-4 d-flex mb-5">

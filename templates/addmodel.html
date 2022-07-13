@@ -112,7 +112,7 @@
                                 <label class="form-check-label" for="inlineRadio2">Category</label>
                             </div>
                             <div class="col-sm-6">
-                                <select class="form-select w-100" id="inlineRadio2" aria-label="Default select example"
+                                <select class="form-control w-100" id="inlineRadio2" aria-label="Default select example"
                                     name="category" required>
                                     <option value="">
                                         --select--
@@ -129,13 +129,13 @@
                                 <label class="form-check-label" for="inlineRadio2">Sub Category</label>
                             </div>
                             <div class="col-sm-6">
-                                <select class="form-select w-100" id="inlineRadio2" aria-label="Default select example"
-                                    name="category" required>
+                                <select class="form-control w-100" id="inlineRadio2" aria-label="Default select example"
+                                    name="subcategory" required>
                                     <option value="">
                                         --select--
                                     </option>
-                                    {% for i in var %}
-                                    <option value="{{i.cat_id}}">{{i.sub_category1}}</option>
+                                    {% for i in sub %}
+                                    <option value="{{i.id}}">{{i.subcategory}}</option>
                                     {% endfor %}
                                 </select>
                             </div>

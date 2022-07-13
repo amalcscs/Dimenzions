@@ -59,17 +59,29 @@ def new_page(request, id):
         data = cartData(request)
         cartItems = data['cartItems']
         man1 = Product.objects.filter(category_id=id)
-        man = categories.objects.get(cat_id=id)
+        man = categories.objects.filter(cat_id=id)
+        sub = SubCategory.objects.all()
         # return render(request, 'new_page.html', {'it':it,'products':products,'cartItems':cartItems,'man': man, 'man1': man1})
-        return render(request, 'new_page.html', {'it':it,'products':products,'cartItems':cartItems,'man': man, 'man1': man1,'member':member})
+        return render(request, 'new_page.html', {'sub':sub,'it':it,'products':products,'cartItems':cartItems,'man': man, 'man1': man1,'member':member})
     # else:
     #         return redirect('/')
 
 
-def sub(request, id, key):
-    man1 = Product.objects.filter(types=key)
-    man = categories.objects.get(cat_id=id)
-    return render(request, 'sub.html', {'man': man, 'man1': man1})
+def sub(request, id):
+    if request.session.has_key('SAdm_id'):
+        SAdm_id = request.session['SAdm_id']
+    else:
+        return redirect('/')
+    member = User.objects.get(id=SAdm_id)
+    products = Product.objects.all()
+    it = categories.objects.all()
+    data = cartData(request)
+    cartItems = data['cartItems']
+    man1 = Product.objects.filter(subcategory_id=id)
+    man = categories.objects.filter(cat_id=id)
+    subcate = SubCategory.objects.filter(id=id)
+    sub1 = SubCategory.objects.all()
+    return render(request, 'sub.html', {'subcate':subcate,'it':it,'data':data,'cartItems':cartItems,'member':member,'products':products,'sub':sub1,'man': man, 'man1': man1})
 
 
 def admin_log(request):
@@ -330,7 +342,8 @@ def addmodel(request):
             return redirect('/')
         adm = Admin_register.objects.filter(reg_id=admid)
         var = categories.objects.all()
-        return render(request, "addmodel.html", {'var': var,'adm':adm})
+        sub = SubCategory.objects.all()
+        return render(request, "addmodel.html", {'sub':sub,'var': var,'adm':adm})
     else:
         return redirect('/')
 
@@ -346,10 +359,11 @@ def createmodel(request):
         format = request.POST['format']
         modeltype = request.POST['modeltype']
         category = request.POST['category']
+        subcategory = request.POST['subcategory']
         fbx = request.FILES['fbx']
 
         item = Product(modelname=modelname, description=description, gib=gib, price=price, types=types, format=format, modeltype=modeltype, category_id=category,
-                     fbx=fbx)
+                     subcategory_id=subcategory,fbx=fbx)
         item.save()
         return redirect('addmodel')
     else:

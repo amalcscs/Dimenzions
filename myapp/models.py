@@ -44,6 +44,8 @@ class Customer(models.Model):
 
 
 class Product(models.Model):
+	category = models.ForeignKey(categories, on_delete=models.CASCADE, null=True,default='')
+	subcategory = models.ForeignKey(SubCategory, on_delete=models.CASCADE, null=True,default='')
 	modelname = models.CharField(max_length=200,default='')
 	description = models.CharField(max_length=255,default='')
 	gib = models.FileField( upload_to="images/",null=True,blank=True,default='')
@@ -51,7 +53,6 @@ class Product(models.Model):
 	types = models.CharField(max_length=255,default='')
 	format = models.CharField(max_length=255,default='')
 	modeltype = models.CharField(max_length=255,default='')
-	category = models.ForeignKey(categories, on_delete=models.CASCADE, null=True,default='')
 	fbx = models.ImageField(default="default.png", upload_to="images")
 	digital = models.BooleanField(default=False,null=True, blank=True)
 	image = models.ImageField(null=True, blank=True,default='')
